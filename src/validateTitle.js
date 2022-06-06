@@ -1,32 +1,45 @@
-const parser = require('conventional-commits-parser').sync;
-const conventionalCommitTypes = require('conventional-commit-types');
+const path = require('path');
+const exec = require('child_process').exec;
 
-function isFunction(functionToCheck) {
-  return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+
+async function validateTitle(preset, title) {
+
+    const commitlintpath = path.resolve(__dirname, '../node_modules', '.bin/commitlint');
+    const commitlintConfig = path.resolve(__dirname, '../.commitlintrc.js');
+    const FAKE_ISSUE = 'CDM-0000';
+    let res;
+    try {
+        res = await new Promise((resolve, reject) => {
+            let result = '';
+            const child = exec(`echo "${title}\n\n${FAKE_ISSUE}" | ${commitlintpath} --config ${commitlintConfig}`);
+            child.stdout.on('data', (data) => {
+                if (data) {
+                    result += data.trim();
+                }
+            });
+
+            child.stderr.on('data', (data) => {
+                result += data
+            });
+
+            child.on('error', (err) => {
+                reject(err);
+            });
+
+            child.on('close', (code) => {
+                resolve(result);
+            });
+        })
+    } catch (e) {
+        throw e
+    }
+    console.log(res);
+    if (res.length) {
+        throw res;
+    }
 }
 
-module.exports = async function validateTitle(preset, title) {
-  let conventionalChangelogConfig = require(preset);
-  if (isFunction(conventionalChangelogConfig)) {
-    conventionalChangelogConfig = await conventionalChangelogConfig();
-  }
-  const { parserOpts } = conventionalChangelogConfig;
-  const result = parser(title, parserOpts);
+module.exports = validateTitle
 
-  if (!result.type) {
-    throw new Error(
-      `No release type found in pull request title "${title}".` +
-        '\n\nAdd a prefix like "fix: ", "feat: " or "feat!: " to indicate what kind of release this pull request corresponds to. The title should match the commit mesage format as specified by https://www.conventionalcommits.org/.'
-    );
-  }
 
-  const allowedTypes = Object.keys(conventionalCommitTypes.types);
-  if (!allowedTypes.includes(result.type)) {
-    throw new Error(
-      `Unknown release type "${result.type}" found in pull request title "${title}".` +
-        `\n\nPlease use one of these recognized types: ${allowedTypes.join(
-          ', '
-        )}.`
-    );
-  }
-};
+// validateTitle('@integromat/commitlint', 'fix: some commit #5').catch(e => e)

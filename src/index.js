@@ -49,7 +49,7 @@ async function run() {
         state,
         description,
         sha: contextPullRequest.head.sha,
-        target_url: 'https://github.com/aslafy-z/conventional-pr-title-action',
+        target_url: 'https://github.com/integromat/conventional-commits/tree/master/commitlint',
         context: contextName,
       },
     );
