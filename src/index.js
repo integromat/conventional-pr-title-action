@@ -15,6 +15,7 @@ async function run() {
     const client = new github.GitHub(process.env.GITHUB_TOKEN);
 
     const contextPullRequest = github.context.payload.pull_request;
+    console.log(contextPullRequest)
     if (!contextPullRequest) {
       throw new Error(
         "This action can only be invoked in `pull_request` events. Otherwise the pull request can't be inferred."
