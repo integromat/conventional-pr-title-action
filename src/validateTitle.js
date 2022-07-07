@@ -1,7 +1,6 @@
 const path = require('path');
 const exec = require('child_process').exec;
 
-
 async function validateTitle(preset, title) {
 
     const commitlintpath = path.resolve(__dirname, '../node_modules', '.bin/commitlint');

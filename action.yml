@@ -2,25 +2,24 @@ name: conventional-pr-title
 author: Zadkiel <hello@zadkiel.fr>
 description: Ensure your PR title matches the Conventional Commits spec (https://www.conventionalcommits.org/).
 inputs:
-  success-state:
-    description: Description of the status check if validation succeeds.
-    required: true
-    default: Title follows the specification.
-  failure-state:
-    description: Description of the status check if validation fails.
-    required: true
-    default: Title does not follow the specification.
-  context-name:
-    description: Persistent status check context key
-    required: true
-    default: conventional-pr-title
-  preset:
-    description: Conventional changelog preset to use.
-    required: true
-    default: conventional-changelog-angular
+    success-state:
+        description: Description of the status check if validation succeeds.
+        required: false
+        default: Title follows the specification.
+    failure-state:
+        description: Description of the status check if validation fails.
+        required: false
+        default: Title does not follow the specification.
+    context-name:
+        description: Persistent status check context key
+        required: false
+        default: 'PR Title lint: '
+    lint-config:
+        description: Conventional changelog config.
+        required: true
 runs:
-  using: docker
-  image: Dockerfile
+    using: docker
+    image: Dockerfile
 branding:
-  icon: shield
-  color: green
+    icon: shield
+    color: green

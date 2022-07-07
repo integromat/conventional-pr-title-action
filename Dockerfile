@@ -1,6 +1,6 @@
 FROM node:17-alpine
 
-ADD package.json package-lock.json .npmrc .commitlintrc.js /action/
+ADD package.json package-lock.json .npmrc  /action/
 
 RUN cd /action && npm ci
 
