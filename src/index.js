@@ -2,8 +2,8 @@ const {writeFile} = require('fs').promises;
 const path = require('path');
 const core = require('@actions/core');
 const github = require('@actions/github');
-const installPreset = require('./installPreset');
-const validateTitle = require('./validateTitle');
+const installPreset = require('./install-preset');
+const validatePullRequest = require('./validate-pull-request');
 
 async function prepareConfig(lintConfig) {
 	const url = path.join(__dirname, '../.commitlintrc.js');
@@ -20,7 +20,6 @@ async function run() {
 		const client = new github.GitHub(process.env.GITHUB_TOKEN);
 
 		const contextPullRequest = github.context.payload.pull_request;
-		console.log(contextPullRequest);
 		if (!contextPullRequest) {
 			throw new Error(
 				"This action can only be invoked in `pull_request` events. Otherwise the pull request can't be inferred."
@@ -35,7 +34,7 @@ async function run() {
 			const config = await prepareConfig(lintConfig);
 			const installPresetPackage = config.extends[0];
 			await installPreset(installPresetPackage + '@latest');
-			await validateTitle(installPresetPackage, contextPullRequest.title);
+			await validatePullRequest(installPresetPackage, contextPullRequest.title, contextPullRequest.body);
 		} catch (err) {
 			error = err;
 		}

@@ -1,16 +1,19 @@
 const path = require('path');
 const exec = require('child_process').exec;
 
-async function validateTitle(preset, title) {
+async function validatePullRequest(preset, title, body = '') {
 
     const commitlintpath = path.resolve(__dirname, '../node_modules', '.bin/commitlint');
     const commitlintConfig = path.resolve(__dirname, '../.commitlintrc.js');
-    const FAKE_ISSUE = 'CDM-0000';
     let res;
+	const commitMessage = !!body ? `${title}\n\n${body}` : title;
+	console.log('============== COMMIT START ==============');
+	console.log(commitMessage);
+	console.log('============== COMMIT END ==============');
     try {
         res = await new Promise((resolve, reject) => {
             let result = '';
-            const child = exec(`echo "${title}\n\n${FAKE_ISSUE}" | ${commitlintpath} --config ${commitlintConfig}`);
+            const child = exec(`echo "${commitMessage}" | ${commitlintpath} --config ${commitlintConfig}`);
             child.stdout.on('data', (data) => {
                 if (data) {
                     result += data.trim();
@@ -30,15 +33,15 @@ async function validateTitle(preset, title) {
             });
         })
     } catch (e) {
-        throw e
+        throw new Error(e);
     }
-    console.log(res);
+	console.log("\nlinter response:\n\n", res)
     if (res.length) {
-        throw res;
+        throw new Error(res);
     }
 }
 
-module.exports = validateTitle
+module.exports = validatePullRequest
 
 
 // validateTitle('@integromat/commitlint', 'fix: some commit #5').catch(e => e)

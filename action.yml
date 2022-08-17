@@ -9,7 +9,7 @@ inputs:
     failure-state:
         description: Description of the status check if validation fails.
         required: false
-        default: Title and Description .does not follow the specification.
+        default: Title and Description does not follow the specification.
     context-name:
         description: Persistent status check context key
         required: false
