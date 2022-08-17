@@ -9,11 +9,11 @@ inputs:
     failure-state:
         description: Description of the status check if validation fails.
         required: false
-        default: Title does not follow the specification.
+        default: Title and Description .does not follow the specification.
     context-name:
         description: Persistent status check context key
         required: false
-        default: 'PR Title lint: '
+        default: 'PR Title & Description lint: '
     lint-config:
         description: Conventional changelog config.
         required: true
