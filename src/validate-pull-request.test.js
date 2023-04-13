@@ -54,3 +54,7 @@ it('should escape "``" in the body', async () => {
 		'- what is the name and type of items in the `headers` array in the `response` object?\n'
 	await validatePullRequest(preset, 'refactor: some refactor', body);
 });
+
+it('should pass revert commit', async () => {
+	await validatePullRequest(preset, 'Revert "feat(sdk-apps-modal): added route guards to protect unsaved sdk-apps changes by modal dialog"');
+});

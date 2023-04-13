@@ -6,6 +6,9 @@ async function validatePullRequest(preset, title, body = '') {
     const commitlintpath = path.resolve(__dirname, '../node_modules', '.bin/commitlint');
     const commitlintConfig = path.resolve(__dirname, '../.commitlintrc.js');
     let res;
+	if (/".+"/g.test(title)) {
+		title = title.replace(/"/g, '\'');
+	}
 	if (body){
 		body = body.replace(/`/gm, '\\`');
 	}
