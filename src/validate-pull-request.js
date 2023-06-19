@@ -1,7 +1,7 @@
 const path = require('path');
 const exec = require('child_process').exec;
 
-async function validatePullRequest(preset, title, body = '') {
+async function validatePullRequest(preset, title, body = '', labels = []) {
 
     const commitlintpath = path.resolve(__dirname, '../node_modules', '.bin/commitlint');
     const commitlintConfig = path.resolve(__dirname, '../.commitlintrc.js');
@@ -11,6 +11,9 @@ async function validatePullRequest(preset, title, body = '') {
 	}
 	if (body){
 		body = body.replace(/`/gm, '\\`');
+	}
+	if (labels.some(label => label.name === 'dependabot' || label.name === 'dependencies')) {
+		body = ''
 	}
 	const commitMessage = !!body ? `${title}\n\n${body}` : title;
 	console.log('============== COMMIT START ==============');

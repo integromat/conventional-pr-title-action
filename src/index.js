@@ -34,7 +34,7 @@ async function run() {
 			const config = await prepareConfig(lintConfig);
 			const installPresetPackage = config.extends[0];
 			await installPreset(installPresetPackage + '@latest');
-			await validatePullRequest(installPresetPackage, contextPullRequest.title, contextPullRequest.body);
+			await validatePullRequest(installPresetPackage, contextPullRequest.title, contextPullRequest.body, contextPullRequest.labels);
 		} catch (err) {
 			error = err;
 		}
