@@ -1,7 +1,11 @@
 const path = require('path');
 const exec = require('child_process').exec;
 
-async function validatePullRequest(preset, title, body = '', labels = []) {
+function checkDependabot(prInfo) {
+	return prInfo.labels.some(label => label.name === 'dependabot' || label.name === 'dependencies')
+		|| prInfo.user.login === 'dependabot[bot]'
+}
+async function validatePullRequest(preset, title, body = '', prInfo) {
 
     const commitlintpath = path.resolve(__dirname, '../node_modules', '.bin/commitlint');
     const commitlintConfig = path.resolve(__dirname, '../.commitlintrc.js');
@@ -12,7 +16,7 @@ async function validatePullRequest(preset, title, body = '', labels = []) {
 	if (body){
 		body = body.replace(/`/gm, '\\`');
 	}
-	if (labels.some(label => label.name === 'dependabot' || label.name === 'dependencies')) {
+	if (checkDependabot(prInfo)) {
 		body = ''
 	}
 	const commitMessage = !!body ? `${title}\n\n${body}` : title;
