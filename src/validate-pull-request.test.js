@@ -55,6 +55,23 @@ it('should escape "``" in the body', async () => {
 	await validatePullRequest(preset, 'refactor: some refactor', body);
 });
 
+it('should ignore everything after "---"', async () => {
+	const body = 'This PR adds and publishes documentation for the webhook logs feature.\n' +
+		'This is my first time writing the endpoint documentation from scratch, so please be thorough with your reviews. I have tested my changes with the OpenAPI viewer and it rendered OK.\n' +
+		'@dankolafa\n' +
+		'---\n' +
+		' I have two questions regarding the schema of the response of the API call `GET /hooks/{hookId}/logs/{logId}`:\n' +
+		'- what schema does have the `query` object in the `request` object?\n' +
+		'- what is the name and type of items in the `headers` array in the `response` object?\n'
+	const res = await validatePullRequest(preset, 'refactor: some refactor', body);
+	expect(res).toEqual(
+		'refactor: some refactor\n\n' +
+		'This PR adds and publishes documentation for the webhook logs feature.\n' +
+		'This is my first time writing the endpoint documentation from scratch, so please be thorough with your reviews. I have tested my changes with the OpenAPI viewer and it rendered OK.\n' +
+		'@dankolafa'
+	)
+});
+
 it('should pass revert commit', async () => {
 	await validatePullRequest(preset, 'Revert "feat(sdk-apps-modal): added route guards to protect unsaved sdk-apps changes by modal dialog"');
 });

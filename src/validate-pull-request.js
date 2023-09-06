@@ -2,8 +2,24 @@ const path = require('path');
 const exec = require('child_process').exec;
 
 function checkDependabot(prInfo) {
+	if (!prInfo) {
+		return false
+	}
 	return prInfo.labels.some(label => label.name === 'dependabot' || label.name === 'dependencies')
 		|| prInfo.user.login === 'dependabot[bot]'
+}
+
+function splitBodyBySeparator(body) {
+	const rows = body.split('\n');
+	for (const [i, row] of rows.entries()) {
+		if (row.startsWith('---')) {
+			console.log('body includes separator "---"');
+			console.log('\n\n splitting commit message. Everything bellow "___" is not validated');
+			rows.splice(i, rows.length - i );
+			return rows.join('\n');
+		}
+	}
+	return body;
 }
 async function validatePullRequest(preset, title, body = '', prInfo) {
 
@@ -14,12 +30,14 @@ async function validatePullRequest(preset, title, body = '', prInfo) {
 		title = title.replace(/"/g, '\'');
 	}
 	if (body){
+		body = splitBodyBySeparator(body);
 		body = body.replace(/`/gm, '\\`');
 	}
 	if (checkDependabot(prInfo)) {
 		body = ''
 	}
 	const commitMessage = !!body ? `${title}\n\n${body}` : title;
+
 	console.log('============== COMMIT START ==============');
 	console.log(commitMessage);
 	console.log('============== COMMIT END ==============');
@@ -52,6 +70,8 @@ async function validatePullRequest(preset, title, body = '', prInfo) {
     if (res.length) {
         throw new Error(res);
     }
+
+	return commitMessage;
 }
 
 module.exports = validatePullRequest
