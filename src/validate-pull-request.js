@@ -29,6 +29,9 @@ async function validatePullRequest(preset, title, body = '', prInfo) {
 	if (/".+"/g.test(title)) {
 		title = title.replace(/"/g, '\'');
 	}
+	if (/`/g.test(title)) {
+		title = title.replace(/`/g, '\'')
+	}
 	if (body){
 		body = splitBodyBySeparator(body);
 		body = body.replace(/`/gm, '\\`');
